@@ -1,9 +1,5 @@
 .iml
 .gradle/
 .idea/
-build.gradle
 gradle/
-gradlew
-gradlew.bat
-settings.gradle
-
+build/
