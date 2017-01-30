@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.Properties;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -15,18 +16,18 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class FileManager {
     private static final Logger logger = LogManager.getLogger();
 
-    public static Properties readProperties(String fileName) {
+    public static Optional<Properties> readProperties(String fileName) {
         final Properties properties = new Properties();
         if (isBlank(fileName)) {
             logger.error("Invalid properties fileName: " + fileName);
-            return properties;
+            return Optional.empty();
         }
 
         logger.trace("Properties fileName: " + fileName);
         final InputStream in = FileManager.class.getClassLoader().getResourceAsStream(fileName);
         if (in == null) {
             logger.error("Failed to get the resource: " + fileName);
-            return properties;
+            return Optional.empty();
         }
 
         try {
@@ -34,7 +35,7 @@ public class FileManager {
         } catch (IOException e) {
             logger.error("Could not load properties!", e);
         }
-        return properties;
+        return Optional.of(properties);
     }
 
 }
