@@ -9,13 +9,13 @@ import java.net.URL;
 /**
  * Created by Christopher on 1/30/2017.
  */
-public final class Case {
+public final class Template {
     private final String name;
-    private final URL url;
+    private final String url;
     private final String searchPattern;
     private final String nestingPattern;
 
-    public Case(String name, URL url, String searchPattern, String nestingPattern) {
+    public Template(String name, String url, String searchPattern, String nestingPattern) {
         this.name = name;
         this.url = url;
         this.searchPattern = searchPattern;
@@ -26,7 +26,7 @@ public final class Case {
         return name;
     }
 
-    public URL getUrl() {
+    public String getUrl() {
         return url;
     }
 
@@ -44,13 +44,13 @@ public final class Case {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        Case aCase = (Case) o;
+        Template template = (Template) o;
 
         return new EqualsBuilder()
-                .append(name, aCase.name)
-                .append(url, aCase.url)
-                .append(searchPattern, aCase.searchPattern)
-                .append(nestingPattern, aCase.nestingPattern)
+                .append(name, template.name)
+                .append(url, template.url)
+                .append(searchPattern, template.searchPattern)
+                .append(nestingPattern, template.nestingPattern)
                 .isEquals();
     }
 

@@ -1,6 +1,7 @@
 package net.remotehost.domdetective.utils;
 
 import com.google.common.collect.Sets;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Optional;
@@ -13,6 +14,13 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Created by Christopher on 1/30/2017.
  */
 public class PropertiesParserTest {
+    
+    private PropertiesParser tested;
+    
+    @Before
+    public void setUpTested(){
+        tested = new PropertiesParser();
+    }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldNotParserNullProperties() {
@@ -20,7 +28,7 @@ public class PropertiesParserTest {
         final Properties input = null;
 
         //when
-        PropertiesParser.getArray(input, "name", ",");
+        tested.getArray(input, "name", ",");
 
         //then should throw IllegalArgumentException
     }
@@ -31,7 +39,7 @@ public class PropertiesParserTest {
         final Properties input = new Properties();
 
         //when
-        PropertiesParser.getArray(input, "", ",");
+        tested.getArray(input, "", ",");
 
         //then should throw IllegalArgumentException
     }
@@ -42,7 +50,7 @@ public class PropertiesParserTest {
         final Properties input = createDummyProperties("key", "test,values");
 
         //when
-        final Optional<String[]> actual = PropertiesParser.getArray(input, "key", null);
+        final Optional<String[]> actual = tested.getArray(input, "key", null);
 
         //then
         assertThat(actual).isNotEmpty();
@@ -55,7 +63,8 @@ public class PropertiesParserTest {
         final Properties input = createDummyProperties("key", "test.values");
 
         //when
-        final Optional<String[]> actual = PropertiesParser.getArray(input, "key", ".");
+        final Optional<String[]> actual = tested.getArray(input, "key", ".");
+        System.out.println(actual.get());
 
         //then
         assertThat(actual).isNotEmpty();
@@ -68,7 +77,7 @@ public class PropertiesParserTest {
         final Properties input = createDummyProperties("Will", "not,look,for,that");
 
         //when
-        final Optional<String[]> actual = PropertiesParser.getArray(input, "test", ",");
+        final Optional<String[]> actual = tested.getArray(input, "test", ",");
 
         //then
         assertThat(actual).isEmpty();
@@ -80,7 +89,7 @@ public class PropertiesParserTest {
         final Properties input = createDummyProperties("key", "singleValue");
 
         //when
-        final Optional<String[]> actual = PropertiesParser.getArray(input, "key", ",");
+        final Optional<String[]> actual = tested.getArray(input, "key", ",");
 
         //then
         assertThat(actual).isNotEmpty();
@@ -93,7 +102,7 @@ public class PropertiesParserTest {
         final Properties input = createDummyProperties("key", "test.values");
 
         //when
-        final Optional<Set<String>> actual = PropertiesParser.getSet(input, "key", ".");
+        final Optional<Set<String>> actual = tested.getSet(input, "key", ".");
 
         //then
         assertThat(actual).isNotEmpty();

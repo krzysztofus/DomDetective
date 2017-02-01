@@ -13,10 +13,10 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 /**
  * Created by Christopher on 1/30/2017.
  */
-public abstract class PropertiesParser {
+public class PropertiesParser {
     private static final Logger logger = LogManager.getLogger();
 
-    public static Optional<String[]> getArray(Properties properties, String name, String delimiter) {
+    public Optional<String[]> getArray(Properties properties, String name, String delimiter) {
         if (properties == null) {
             throw new IllegalArgumentException("Properties are required!");
         }
@@ -36,7 +36,7 @@ public abstract class PropertiesParser {
             return Optional.empty();
         }
 
-        if (!property.contains(delimiter)) {
+        if (property.contains(delimiter)) {
             return Optional.of(property.split(delimiter));
         } else {
             logger.warn("Property key: " + name + "contains just one value");
@@ -44,12 +44,8 @@ public abstract class PropertiesParser {
         }
     }
 
-    public static Optional<Set<String>> getSet(Properties properties, String name, String delimiter) {
+    public Optional<Set<String>> getSet(Properties properties, String name, String delimiter) {
         final Optional<String[]> values = getArray(properties, name, delimiter);
-        if (values.isPresent()) {
-            return Optional.of(Sets.newHashSet(values.get()));
-        } else {
-            return Optional.empty();
-        }
+        return Optional.ofNullable(Sets.newHashSet(values.get()));
     }
 }
