@@ -28,7 +28,7 @@ public class PropertiesParserTest {
         final Properties input = null;
 
         //when
-        tested.getArray(input, "name", ",");
+        tested.getArray("name", input);
 
         //then should throw IllegalArgumentException
     }
@@ -39,7 +39,7 @@ public class PropertiesParserTest {
         final Properties input = new Properties();
 
         //when
-        tested.getArray(input, "", ",");
+        tested.getArray("", input);
 
         //then should throw IllegalArgumentException
     }
@@ -50,21 +50,7 @@ public class PropertiesParserTest {
         final Properties input = createDummyProperties("key", "test,values");
 
         //when
-        final Optional<String[]> actual = tested.getArray(input, "key", null);
-
-        //then
-        assertThat(actual).isNotEmpty();
-        assertThat(actual).contains(new String[]{"test", "values"});
-    }
-
-    @Test
-    public void shouldParseValidPropertyOnSetDelimiter() {
-        //given
-        final Properties input = createDummyProperties("key", "test.values");
-
-        //when
-        final Optional<String[]> actual = tested.getArray(input, "key", ".");
-        System.out.println(actual.get());
+        final String[] actual = tested.getArray("key", input);
 
         //then
         assertThat(actual).isNotEmpty();
@@ -77,7 +63,7 @@ public class PropertiesParserTest {
         final Properties input = createDummyProperties("Will", "not,look,for,that");
 
         //when
-        final Optional<String[]> actual = tested.getArray(input, "test", ",");
+        final String[] actual = tested.getArray("test", input);
 
         //then
         assertThat(actual).isEmpty();
@@ -89,7 +75,7 @@ public class PropertiesParserTest {
         final Properties input = createDummyProperties("key", "singleValue");
 
         //when
-        final Optional<String[]> actual = tested.getArray(input, "key", ",");
+        final String[] actual = tested.getArray("key", input);
 
         //then
         assertThat(actual).isNotEmpty();
@@ -99,10 +85,10 @@ public class PropertiesParserTest {
     @Test
     public void shouldGetSet() {
         //given
-        final Properties input = createDummyProperties("key", "test.values");
+        final Properties input = createDummyProperties("key", "test,values");
 
         //when
-        final Optional<Set<String>> actual = tested.getSet(input, "key", ".");
+        final Optional<Set<String>> actual = tested.getSet(input, "key");
 
         //then
         assertThat(actual).isNotEmpty();

@@ -16,7 +16,9 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class PropertiesParser {
     private static final Logger logger = LogManager.getLogger();
 
-    public Optional<String[]> getArray(Properties properties, String name, String delimiter) {
+    public static final String DELIMITER = ",";
+
+    public String[] getArray(String name, Properties properties) {
         if (properties == null) {
             throw new IllegalArgumentException("Properties are required!");
         }
@@ -25,27 +27,23 @@ public class PropertiesParser {
             throw new IllegalArgumentException("Property name is required!");
         }
 
-        if (isBlank(delimiter)) {
-            logger.debug("Blank delimiter. Defaulting to ','");
-            delimiter = ",";
-        }
-
         final String property = properties.getProperty(name);
         if (isBlank(property)) {
             logger.warn("Property: " + name + " not found!");
-            return Optional.empty();
+            return new String[0];
         }
 
-        if (property.contains(delimiter)) {
-            return Optional.of(property.split(delimiter));
+        if (property.contains(DELIMITER)) {
+            final String[] split = property.split(DELIMITER);
+            return split;
         } else {
             logger.warn("Property key: " + name + "contains just one value");
-            return Optional.of(new String[]{property});
+            return new String[]{property};
         }
     }
 
-    public Optional<Set<String>> getSet(Properties properties, String name, String delimiter) {
-        final Optional<String[]> values = getArray(properties, name, delimiter);
-        return Optional.ofNullable(Sets.newHashSet(values.get()));
+    public Optional<Set<String>> getSet(Properties properties, String name) {
+        final String[] values = getArray(name, properties);
+        return Optional.ofNullable(Sets.newHashSet(values));
     }
 }

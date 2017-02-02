@@ -5,7 +5,6 @@ import net.remotehost.domdetective.utils.PropertiesParser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -33,8 +32,8 @@ public class TemplateParserTest {
     @Before
     public void setUp() {
         tested = new TemplateParser();
-        given(propertiesParser.getArray(any(), anyString(), anyString()))
-                .willReturn(Optional.of(new String[]{"something", "else", "misconfiguration"}));
+        given(propertiesParser.getArray(anyString(), any()))
+                .willReturn(new String[]{"something", "else", "misconfiguration"});
     }
 
     @Test
@@ -43,10 +42,10 @@ public class TemplateParserTest {
         final Properties input = createDummy();
 
         //when
-        final Optional<String[]> actual = tested.getTemplatesNames(input);
+        final String[] actual = tested.getTemplatesNames(input);
 
         //then
-        assertThat(actual).isPresent();
+        assertThat(actual).isNotEmpty();
         assertThat(actual).contains(new String[]{"something", "else", "misconfiguration"});
     }
 
@@ -96,7 +95,7 @@ public class TemplateParserTest {
 
     private Properties createDummy() {
         final Properties properties = new Properties();
-        properties.setProperty("cases", "something,else,misconfiguration");
+        properties.setProperty("templates", "something,else,misconfiguration");
         properties.setProperty("something.url", "http://something.com");
         properties.setProperty("something.search.pattern", "<div id=\"bajo\">*</div>");
         properties.setProperty("something.nesting.pattern", "<button id=\"bajo\">*</button>");
