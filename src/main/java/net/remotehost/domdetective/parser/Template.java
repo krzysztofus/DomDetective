@@ -4,8 +4,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.net.URL;
-
 /**
  * Created by Christopher on 1/30/2017.
  */
@@ -13,12 +11,14 @@ public final class Template {
     private final String name;
     private final String url;
     private final String searchPattern;
+    private final String[] outputPattern;
     private final String nestingPattern;
 
-    public Template(String name, String url, String searchPattern, String nestingPattern) {
+    public Template(String name, String url, String searchPattern, String[] outputPattern, String nestingPattern) {
         this.name = name;
         this.url = url;
         this.searchPattern = searchPattern;
+        this.outputPattern = outputPattern;
         this.nestingPattern = nestingPattern;
     }
 
@@ -32,6 +32,10 @@ public final class Template {
 
     public String getSearchPattern() {
         return searchPattern;
+    }
+
+    public String[] getOutputPattern() {
+        return outputPattern;
     }
 
     public String getNestingPattern() {
@@ -50,6 +54,7 @@ public final class Template {
                 .append(name, template.name)
                 .append(url, template.url)
                 .append(searchPattern, template.searchPattern)
+                .append(outputPattern, template.outputPattern)
                 .append(nestingPattern, template.nestingPattern)
                 .isEquals();
     }
@@ -60,6 +65,7 @@ public final class Template {
                 .append(name)
                 .append(url)
                 .append(searchPattern)
+                .append(outputPattern)
                 .append(nestingPattern)
                 .toHashCode();
     }
@@ -70,6 +76,7 @@ public final class Template {
                 .append("name", name)
                 .append("url", url)
                 .append("searchPattern", searchPattern)
+                .append("outputPattern", outputPattern)
                 .append("nestingPattern", nestingPattern)
                 .toString();
     }

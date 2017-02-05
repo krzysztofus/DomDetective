@@ -1,11 +1,112 @@
 package net.remotehost.domdetective;
 
+import net.remotehost.domdetective.exceptions.ConfigurationException;
+import net.remotehost.domdetective.parser.Template;
+import net.remotehost.domdetective.parser.TemplateParser;
+import net.remotehost.domdetective.utils.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Optional;
+import java.util.Properties;
+
+import static net.remotehost.domdetective.config.ConfigProperties.*;
+import static org.apache.commons.lang3.StringUtils.isNoneBlank;
+
 /**
  * Created by Christopher on 1/24/2017.
  */
 public class DomDetective {
+    private static final Logger logger = LogManager.getLogger();
 
-    public static void main(String[] args) {
+    private static final TemplateParser templateParser = new TemplateParser();
 
+    private Properties appProperties;
+    private String baseDir;
+    private String configDir;
+    private String configFile;
+    private String templateFile;
+
+    public void execute() {
+        logger.info("Verifying config integrity...");
+        if (!isConfigured()) {
+            throw new IllegalArgumentException(String.format("Require: %s, %s, %s, %s to be set before execution",
+                    BASE_DIR_KEY, CONFIG_DIR_KEY, CONFIG_FILE_KEY, TEMPLATE_FILE_KEY));
+        }
+        readConfig();
+
+        logger.info("Reading appProperties file...");
+        final Optional<Properties> propertiesOrNot = FileUtils.readProperties(Paths.get(configDir, configFile).toString());
+        if (!propertiesOrNot.isPresent()) {
+            throw new ConfigurationException("Properties file is missing");
+        }
+        appProperties = propertiesOrNot.get();
+
+        logger.info("Reading templates file...");
+        final Optional<Properties> templateOrNot = FileUtils.readProperties(Paths.get(baseDir, templateFile).toString());
+        if (!templateOrNot.isPresent()) {
+            throw new ConfigurationException("Template file is missing!");
+        }
+        final Properties templates = templateOrNot.get();
+
+        logger.debug("Parsing templates...");
+        final Optional<Template> northOrNot = templateParser.parseTemplate("north", templates);
+        if (!northOrNot.isPresent()) {
+            throw new RuntimeException("Ups! Something went wrong");
+        }
+        final Template north = northOrNot.get();
+
+        logger.info("Processing template...");
+        processTemplate(north);
+    }
+
+    public void processTemplate(Template template) {
+        if (template == null) {
+            throw new IllegalArgumentException("Valid template is required!");
+        }
+
+        try {
+            final Document document = Jsoup.connect(template.getUrl())
+                    .data("language", "English")
+                    .userAgent("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36")
+                    .timeout(3000)
+                    .get();
+            logger.debug("Acquired document:\n" + document.title());
+
+            final Elements elements = document.select(template.getSearchPattern());
+            logger.debug(String.format("Found %s elements matching pattern: %s", elements.size(), template.getSearchPattern()));
+            for (Element element : elements) {
+                parseElement(element, template.getOutputPattern());
+            }
+        } catch (IOException e) {
+            logger.error("Failed to connect!\n" + template.toString());
+        }
+    }
+
+    private void parseElement(Element element, String[] cssQueries) {
+        for (String query : cssQueries) {
+            System.out.println(element.select(query).text());
+        }
+    }
+
+    public static boolean isConfigured() {
+        final String baseDir = System.getProperty(BASE_DIR_KEY);
+        final String configDir = System.getProperty(CONFIG_DIR_KEY);
+        final String configFile = System.getProperty(CONFIG_FILE_KEY);
+        final String templateFile = System.getProperty(TEMPLATE_FILE_KEY);
+
+        return isNoneBlank(baseDir, configDir, configFile, templateFile);
+    }
+    private void readConfig() {
+        baseDir = System.getProperty(BASE_DIR_KEY);
+        configDir = System.getProperty(CONFIG_DIR_KEY);
+        configFile = System.getProperty(CONFIG_FILE_KEY);
+        templateFile = System.getProperty(TEMPLATE_FILE_KEY);
     }
 }

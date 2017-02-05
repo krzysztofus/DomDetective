@@ -60,7 +60,7 @@ public class TemplateParserTest {
         //then
         assertThat(actual).isPresent();
         assertThat(actual).contains(new Template("something", "http://something.com",
-                "<div id=\"bajo\">*</div>", "<button id=\"bajo\">*</button>"));
+                "div.bajo", new String[]{"div.class"}, "button.bajo"));
     }
 
     @Test
@@ -86,10 +86,10 @@ public class TemplateParserTest {
         //then
         assertThat(actual).isPresent();
         final List<Template> testTemplates = Lists.newArrayList(
-                new Template("something", "http://something.com",
-                        "<div id=\"bajo\">*</div>", "<button id=\"bajo\">*</button>"),
-                new Template("else", "http://else.com",
-                        "<div id=\"jajo\">*</div>", "<button id=\"jajo\">*</button>"));
+                new Template("something", "http://something.com", "div.bajo",
+                        new String[]{"div.class"}, "button.bajo"),
+                new Template("else", "http://else.com", "div.jajo",
+                        new String[]{"div.class"}, "button.jajo"));
         assertThat(actual).contains(testTemplates);
     }
 
@@ -97,12 +97,14 @@ public class TemplateParserTest {
         final Properties properties = new Properties();
         properties.setProperty("templates", "something,else,misconfiguration");
         properties.setProperty("something.url", "http://something.com");
-        properties.setProperty("something.search.pattern", "<div id=\"bajo\">*</div>");
-        properties.setProperty("something.nesting.pattern", "<button id=\"bajo\">*</button>");
+        properties.setProperty("something.search.pattern", "div.bajo");
+        properties.setProperty("something.output.pattern", "div.class");
+        properties.setProperty("something.nesting.pattern", "button.bajo");
 
         properties.setProperty("else.url", "http://else.com");
-        properties.setProperty("else.search.pattern", "<div id=\"jajo\">*</div>");
-        properties.setProperty("else.nesting.pattern", "<button id=\"jajo\">*</button>");
+        properties.setProperty("else.search.pattern", "div.jajo");
+        properties.setProperty("else.output.pattern", "div.class");
+        properties.setProperty("else.nesting.pattern", "button.jajo");
         return properties;
     }
 
