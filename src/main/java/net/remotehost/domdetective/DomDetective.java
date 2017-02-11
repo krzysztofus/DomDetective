@@ -3,6 +3,7 @@ package net.remotehost.domdetective;
 import net.remotehost.domdetective.exceptions.ConfigurationException;
 import net.remotehost.domdetective.parser.Template;
 import net.remotehost.domdetective.parser.TemplateParser;
+import net.remotehost.domdetective.tasks.SearchTask;
 import net.remotehost.domdetective.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,32 +68,8 @@ public class DomDetective {
     }
 
     public void processTemplate(Template template) {
-        if (template == null) {
-            throw new IllegalArgumentException("Valid template is required!");
-        }
-
-        try {
-            final Document document = Jsoup.connect(template.getUrl())
-                    .data("language", "English")
-                    .userAgent("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36")
-                    .timeout(3000)
-                    .get();
-            logger.debug("Acquired document:\n" + document.title());
-
-            final Elements elements = document.select(template.getSearchPattern());
-            logger.debug(String.format("Found %s elements matching pattern: %s", elements.size(), template.getSearchPattern()));
-            for (Element element : elements) {
-                parseElement(element, template.getOutputPattern());
-            }
-        } catch (IOException e) {
-            logger.error("Failed to connect!\n" + template.toString());
-        }
-    }
-
-    private void parseElement(Element element, String[] cssQueries) {
-        for (String query : cssQueries) {
-            System.out.println(element.select(query).text());
-        }
+        final SearchTask task = new SearchTask(template);
+        task.execute();
     }
 
     public static boolean isConfigured() {

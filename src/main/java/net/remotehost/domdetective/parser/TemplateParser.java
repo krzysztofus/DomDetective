@@ -1,6 +1,5 @@
 package net.remotehost.domdetective.parser;
 
-import net.remotehost.domdetective.utils.PropertiesParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

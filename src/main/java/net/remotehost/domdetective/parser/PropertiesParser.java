@@ -1,4 +1,4 @@
-package net.remotehost.domdetective.utils;
+package net.remotehost.domdetective.parser;
 
 import com.google.common.collect.Sets;
 import org.apache.logging.log4j.LogManager;

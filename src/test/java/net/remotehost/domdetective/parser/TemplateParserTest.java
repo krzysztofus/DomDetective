@@ -1,7 +1,6 @@
 package net.remotehost.domdetective.parser;
 
 import com.google.common.collect.Lists;
-import net.remotehost.domdetective.utils.PropertiesParser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

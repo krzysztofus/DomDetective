@@ -1,6 +1,7 @@
-package net.remotehost.domdetective.utils;
+package net.remotehost.domdetective.parser;
 
 import com.google.common.collect.Sets;
+import net.remotehost.domdetective.parser.PropertiesParser;
 import org.junit.Before;
 import org.junit.Test;
 
