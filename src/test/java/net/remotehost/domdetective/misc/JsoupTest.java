@@ -51,6 +51,6 @@ public class JsoupTest {
         //then
         assertThat(actual).isNotNull();
         assertThat(actual.size()).isEqualTo(1);
-        assertThat(actual).isEqualTo("728-TY-2307");
+        assertThat(actual.get(0).text()).isEqualTo("728-TY-2307");
     }
 }

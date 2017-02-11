@@ -26,12 +26,12 @@ public class TemplateParserTest {
     private TemplateParser tested;
 
     @Mock
-    private PropertiesParser propertiesParser;
+    private PropertiesUtil propertiesUtil;
 
     @Before
     public void setUp() {
         tested = new TemplateParser();
-        given(propertiesParser.getArray(anyString(), any()))
+        given(propertiesUtil.getArray(anyString(), any()))
                 .willReturn(new String[]{"something", "else", "misconfiguration"});
     }
 

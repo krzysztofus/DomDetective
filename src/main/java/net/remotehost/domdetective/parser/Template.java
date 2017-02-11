@@ -12,14 +12,14 @@ public final class Template {
     private final String url;
     private final String searchPattern;
     private final String[] outputPattern;
-    private final String nestingPattern;
+    private final String recurrencePattern;
 
-    public Template(String name, String url, String searchPattern, String[] outputPattern, String nestingPattern) {
+    public Template(String name, String url, String searchPattern, String[] outputPattern, String recurrencePattern) {
         this.name = name;
         this.url = url;
         this.searchPattern = searchPattern;
         this.outputPattern = outputPattern;
-        this.nestingPattern = nestingPattern;
+        this.recurrencePattern = recurrencePattern;
     }
 
     public String getName() {
@@ -38,8 +38,8 @@ public final class Template {
         return outputPattern;
     }
 
-    public String getNestingPattern() {
-        return nestingPattern;
+    public String getRecurrencePattern() {
+        return recurrencePattern;
     }
 
     @Override
@@ -55,7 +55,7 @@ public final class Template {
                 .append(url, template.url)
                 .append(searchPattern, template.searchPattern)
                 .append(outputPattern, template.outputPattern)
-                .append(nestingPattern, template.nestingPattern)
+                .append(recurrencePattern, template.recurrencePattern)
                 .isEquals();
     }
 
@@ -66,7 +66,7 @@ public final class Template {
                 .append(url)
                 .append(searchPattern)
                 .append(outputPattern)
-                .append(nestingPattern)
+                .append(recurrencePattern)
                 .toHashCode();
     }
 
@@ -77,7 +77,7 @@ public final class Template {
                 .append("url", url)
                 .append("searchPattern", searchPattern)
                 .append("outputPattern", outputPattern)
-                .append("nestingPattern", nestingPattern)
+                .append("recurrencePattern", recurrencePattern)
                 .toString();
     }
 }

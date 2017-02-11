@@ -20,16 +20,16 @@ public class TemplateParser {
     public static final String TEMPLATE_URL = ".url";
     public static final String TEMPLATE_SEARCH_PATTERN = ".search.pattern";
     public static final String TEMPLATE_OUTPUT_PATTERN = ".output.pattern";
-    public static final String TEMPLATE_NESTING_PATTERN = ".nesting.pattern";
+    public static final String TEMPLATE_RECURRENCE_PATTERN = ".recurrence.pattern";
 
-    private final PropertiesParser parser;
+    private final PropertiesUtil parser;
 
-    public TemplateParser(PropertiesParser parser) {
+    public TemplateParser(PropertiesUtil parser) {
         this.parser = parser;
     }
 
     public TemplateParser() {
-        this.parser = new PropertiesParser();
+        this.parser = new PropertiesUtil();
     }
 
     public Optional<List<Template>> parseTemplates(Properties rawTemplates) {
@@ -68,7 +68,7 @@ public class TemplateParser {
         final String url = properties.getProperty(name + TEMPLATE_URL);
         final String searchPattern = properties.getProperty(name + TEMPLATE_SEARCH_PATTERN);
         final String[] outputPattern = parser.getArray(name + TEMPLATE_OUTPUT_PATTERN, properties);
-        final String nestingPattern = properties.getProperty(name + TEMPLATE_NESTING_PATTERN);
+        final String nestingPattern = properties.getProperty(name + TEMPLATE_RECURRENCE_PATTERN);
 
         if (isAnyBlank(url, searchPattern, nestingPattern)) {
             logger.error("Malformed template for case: " + name);

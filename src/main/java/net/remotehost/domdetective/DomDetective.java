@@ -7,12 +7,7 @@ import net.remotehost.domdetective.tasks.SearchTask;
 import net.remotehost.domdetective.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.Properties;
@@ -68,7 +63,7 @@ public class DomDetective {
     }
 
     public void processTemplate(Template template) {
-        final SearchTask task = new SearchTask(template);
+        final SearchTask task = new SearchTask(appProperties, template);
         task.execute();
     }
 

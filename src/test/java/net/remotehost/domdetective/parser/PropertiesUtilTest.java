@@ -1,7 +1,6 @@
 package net.remotehost.domdetective.parser;
 
 import com.google.common.collect.Sets;
-import net.remotehost.domdetective.parser.PropertiesParser;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,13 +13,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Created by Christopher on 1/30/2017.
  */
-public class PropertiesParserTest {
+public class PropertiesUtilTest {
     
-    private PropertiesParser tested;
+    private PropertiesUtil tested;
     
     @Before
     public void setUpTested(){
-        tested = new PropertiesParser();
+        tested = new PropertiesUtil();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -89,7 +88,7 @@ public class PropertiesParserTest {
         final Properties input = createDummyProperties("key", "test,values");
 
         //when
-        final Optional<Set<String>> actual = tested.getSet(input, "key");
+        final Optional<Set<String>> actual = tested.getSet("key", input);
 
         //then
         assertThat(actual).isNotEmpty();
