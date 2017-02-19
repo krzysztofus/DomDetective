@@ -8,14 +8,12 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 
 /**
  * Created by Christopher on 1/31/2017.
@@ -25,14 +23,9 @@ public class TemplateParserTest {
 
     private TemplateParser tested;
 
-    @Mock
-    private PropertiesUtil propertiesUtil;
-
     @Before
     public void setUp() {
         tested = new TemplateParser();
-        given(propertiesUtil.getArray(anyString(), any()))
-                .willReturn(new String[]{"something", "else", "misconfiguration"});
     }
 
     @Test
@@ -59,7 +52,7 @@ public class TemplateParserTest {
         //then
         assertThat(actual).isPresent();
         assertThat(actual).contains(new Template("something", "http://something.com",
-                "div.bajo", new String[]{"div.class"}, "button.bajo"));
+                "div.bajo", Arrays.asList("div.class"), "button.bajo"));
     }
 
     @Test
@@ -86,9 +79,9 @@ public class TemplateParserTest {
         assertThat(actual).isPresent();
         final List<Template> testTemplates = Lists.newArrayList(
                 new Template("something", "http://something.com", "div.bajo",
-                        new String[]{"div.class"}, "button.bajo"),
+                        Arrays.asList("div.class"), "button.bajo"),
                 new Template("else", "http://else.com", "div.jajo",
-                        new String[]{"div.class"}, "button.jajo"));
+                        Arrays.asList("div.class"), "button.jajo"));
         assertThat(actual).contains(testTemplates);
     }
 
@@ -98,12 +91,12 @@ public class TemplateParserTest {
         properties.setProperty("something.url", "http://something.com");
         properties.setProperty("something.search.pattern", "div.bajo");
         properties.setProperty("something.output.pattern", "div.class");
-        properties.setProperty("something.nesting.pattern", "button.bajo");
+        properties.setProperty("something.recurrence.pattern", "button.bajo");
 
         properties.setProperty("else.url", "http://else.com");
         properties.setProperty("else.search.pattern", "div.jajo");
         properties.setProperty("else.output.pattern", "div.class");
-        properties.setProperty("else.nesting.pattern", "button.jajo");
+        properties.setProperty("else.recurrence.pattern", "button.jajo");
         return properties;
     }
 

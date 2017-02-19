@@ -1,12 +1,11 @@
 package net.remotehost.domdetective.parser;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Optional;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -18,7 +17,16 @@ public class PropertiesUtil {
 
     public static final String DELIMITER = ",";
 
-    public static Optional<Integer> getIntegerProperty(String key, Properties properties) {
+    public static int getIntegerProperty(Properties properties, String key, int defaultValue) {
+        final Optional<Integer> integerProperty = getIntegerProperty(properties, key);
+        if (integerProperty.isPresent()) {
+            return integerProperty.get();
+        } else {
+            return defaultValue;
+        }
+    }
+
+    public static Optional<Integer> getIntegerProperty(Properties properties, String key) {
         basicInputCheck(key, properties);
 
         final String property = properties.getProperty(key);
@@ -66,5 +74,19 @@ public class PropertiesUtil {
     public static Optional<Set<String>> getSet(String key, Properties properties) {
         final String[] values = getArray(key, properties);
         return Optional.ofNullable(Sets.newHashSet(values));
+    }
+
+    public static List<String> getList(String key, Properties properties) {
+        final String[] values = getArray(key, properties);
+        return Lists.newArrayList(values);
+    }
+
+    public static void printProperties(Properties properties) {
+        final Set<Map.Entry<Object, Object>> entries = properties.entrySet();
+        logger.debug("Printing properties entries:");
+        for (Map.Entry entry : entries) {
+            logger.debug(entry.getKey() + "=" + entry.getValue());
+        }
+        logger.debug("Printing done. No more entries");
     }
 }

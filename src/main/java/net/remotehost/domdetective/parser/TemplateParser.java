@@ -67,15 +67,15 @@ public class TemplateParser {
 
         final String url = properties.getProperty(name + TEMPLATE_URL);
         final String searchPattern = properties.getProperty(name + TEMPLATE_SEARCH_PATTERN);
-        final String[] outputPattern = parser.getArray(name + TEMPLATE_OUTPUT_PATTERN, properties);
-        final String nestingPattern = properties.getProperty(name + TEMPLATE_RECURRENCE_PATTERN);
+        final List<String> outputPattern = parser.getList(name + TEMPLATE_OUTPUT_PATTERN, properties);
+        final String recurrencePattern = properties.getProperty(name + TEMPLATE_RECURRENCE_PATTERN);
 
-        if (isAnyBlank(url, searchPattern, nestingPattern)) {
+        if (isAnyBlank(url, searchPattern, recurrencePattern)) {
             logger.error("Malformed template for case: " + name);
             return Optional.empty();
         }
 
-        final Template template = new Template(name, url, searchPattern, outputPattern, nestingPattern);
+        final Template template = new Template(name, url, searchPattern, outputPattern, recurrencePattern);
         logger.debug("Parsed template:\n" + template.toString());
         return Optional.of(template);
     }

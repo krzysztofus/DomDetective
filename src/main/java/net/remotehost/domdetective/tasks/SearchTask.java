@@ -11,8 +11,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * Created by Christopher on 2/11/2017.
@@ -23,6 +27,7 @@ public class SearchTask implements Task {
     public static final String JSOUP_LANGUAGE_KEY = "jsuop.language";
     public static final String JSOUP_USER_AGENT_KEY = "jsoup.userAgent";
     public static final String JSOUP_CONNECTION_TIMEOUT = "jsoup.timeout";
+    public static final String JSOUP_MAX_RECCURENCE = "jsoup.maxRecurrenceCount";
 
     private final Properties properties;
     private final Template template;
@@ -33,67 +38,63 @@ public class SearchTask implements Task {
     }
 
     @Override
-    public void execute() {
+    public void execute(TaskContext context) {
         if (template == null) {
             throw new IllegalArgumentException("Valid template is required!");
         }
 
+        final int maxRecurrenceCount = PropertiesUtil.getIntegerProperty(properties, JSOUP_MAX_RECCURENCE, 100);
         try {
             final Document document = getDocument(template.getUrl());
-            recursiveSearch(document);
+            recursiveSearch(context, document, maxRecurrenceCount);
         } catch (IOException e) {
             logger.error("Failed to connect!\n" + template.toString());
         }
     }
 
-    private void recursiveSearch(Document document) throws IOException {
+    public void recursiveSearch(TaskContext context, Document document, int recurrenceCounter) throws IOException {
+
         final Elements elements = document.select(template.getSearchPattern());
         logger.debug(String.format("Found %s elements matching pattern: %s", elements.size(), template.getSearchPattern()));
         for (Element element : elements) {
-            parseElement(element, template.getOutputPattern());
+            context.addRow(parseElement(element, template.getOutputPattern()));
         }
 
         final Optional<Document> next = getNext(document, template.getRecurrencePattern());
-        if (next.isPresent()) {
-            recursiveSearch(next.get());
+        if (next.isPresent() && recurrenceCounter > 0) {
+            recursiveSearch(context, next.get(), --recurrenceCounter);
         }
     }
 
     private Document getDocument(String url) throws IOException {
-        final Optional<Integer> timeoutOrNot = PropertiesUtil.getIntegerProperty(JSOUP_CONNECTION_TIMEOUT, properties);
+        final int timeout = PropertiesUtil.getIntegerProperty(properties, JSOUP_CONNECTION_TIMEOUT, 3000);
         final Document document = Jsoup.connect(url)
                 .data("language", properties.getProperty(JSOUP_LANGUAGE_KEY))
                 .userAgent(properties.getProperty(JSOUP_USER_AGENT_KEY))
-                .timeout(timeoutOrNot.isPresent() ? timeoutOrNot.get() : 3000)
+                .timeout(timeout)
                 .get();
         logger.debug("Acquired document:\n" + document.title());
         return document;
     }
 
-    private void parseElement(Element element, String[] cssQueries) {
-        for (String query : cssQueries) {
-            System.out.println(element.select(query).text());
-        }
+    private OutputRow parseElement(Element element, List<String> cssQueries) {
+        return cssQueries.stream().map(query -> element.select(query).text()).collect(Collectors.toCollection(OutputRow::new));
     }
 
     private Optional<Document> getNext(Document document, String nestingPattern) throws IOException {
-        final Elements nested = document.select(nestingPattern);
+        final String nestedUrl = document.select(nestingPattern).attr("href");
 
-        switch (nested.size()) {
-            case 0:
-                return Optional.empty();
-            case 1:
-                final String nestedUrl = nested.get(0).text();
-                final boolean isUrl = UrlValidator.getInstance().isValid(nestedUrl);
-                if (!isUrl) {
-                logger.warn("Configured css query does not point to a valid next page pointer!");
-                    return Optional.empty();
-                }
-
-                return Optional.of(getDocument(nestedUrl));
-            default:
-                logger.warn("Expecting only 1 pointer to next page. Instead received: " + nested.size());
-                return Optional.empty();
+        if (isBlank(nestedUrl)) {
+            logger.debug("Did not find a valid pointer to next document. It usually means search ended on last element.");
+            return Optional.empty();
         }
+
+        final boolean isUrl = UrlValidator.getInstance().isValid(nestedUrl);
+        if (!isUrl) {
+            logger.warn("Configured css query does not point to a valid next page pointer!");
+            return Optional.empty();
+        }
+
+        return Optional.of(getDocument(nestedUrl));
     }
 }

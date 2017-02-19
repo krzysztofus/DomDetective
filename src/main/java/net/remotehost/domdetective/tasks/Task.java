@@ -5,5 +5,5 @@ package net.remotehost.domdetective.tasks;
  */
 public interface Task {
 
-    void execute();
+    void execute(TaskContext context);
 }

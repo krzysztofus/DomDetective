@@ -53,4 +53,18 @@ public class JsoupTest {
         assertThat(actual.size()).isEqualTo(1);
         assertThat(actual.get(0).text()).isEqualTo("728-TY-2307");
     }
+
+    @Test
+    public void shouldFindHrefValue() {
+        //given
+        final String input = "<a href=\"url\" class=\"wantUrl\">I want that url</a>";
+
+        //when
+        final Document doc = Jsoup.parse(input);
+        final String actual = doc.select("a.wantUrl").attr("href");
+
+        //then
+        assertThat(actual).isNotNull();
+        assertThat(actual).isEqualTo("url");
+    }
 }

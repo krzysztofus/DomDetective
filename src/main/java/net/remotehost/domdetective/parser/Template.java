@@ -4,6 +4,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.List;
+
 /**
  * Created by Christopher on 1/30/2017.
  */
@@ -11,10 +13,10 @@ public final class Template {
     private final String name;
     private final String url;
     private final String searchPattern;
-    private final String[] outputPattern;
+    private final List<String> outputPattern;
     private final String recurrencePattern;
 
-    public Template(String name, String url, String searchPattern, String[] outputPattern, String recurrencePattern) {
+    public Template(String name, String url, String searchPattern, List<String> outputPattern, String recurrencePattern) {
         this.name = name;
         this.url = url;
         this.searchPattern = searchPattern;
@@ -34,7 +36,7 @@ public final class Template {
         return searchPattern;
     }
 
-    public String[] getOutputPattern() {
+    public List<String> getOutputPattern() {
         return outputPattern;
     }
 
