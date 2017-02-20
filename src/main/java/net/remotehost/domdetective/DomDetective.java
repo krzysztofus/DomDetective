@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -57,14 +58,14 @@ public class DomDetective {
         printProperties(templates);
 
         logger.debug("Parsing templates...");
-        final Optional<Template> northOrNot = templateParser.parseTemplate("north", templates);
-        if (!northOrNot.isPresent()) {
+        final Optional<List<Template>> templatesOrNot = templateParser.parseTemplates(templates);
+        if (!templatesOrNot.isPresent()) {
             throw new RuntimeException("Ups! Something went wrong");
         }
-        final Template north = northOrNot.get();
+        final List<Template> parsedTemplates = templatesOrNot.get();
 
-        logger.info("Processing template...");
-        processTemplate(north);
+        logger.info("Processing templates...");
+        parsedTemplates.stream().forEach(this::processTemplate);
         logger.info("Execution successful!");
     }
 
