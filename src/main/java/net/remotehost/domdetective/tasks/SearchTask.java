@@ -1,5 +1,6 @@
 package net.remotehost.domdetective.tasks;
 
+import com.sun.org.apache.xpath.internal.XPath;
 import net.remotehost.domdetective.parser.PropertiesUtil;
 import net.remotehost.domdetective.parser.Template;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -9,6 +10,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import us.codecraft.xsoup.Xsoup;
 
 import java.io.IOException;
 import java.util.List;
@@ -53,7 +55,6 @@ public class SearchTask implements Task {
     }
 
     public void recursiveSearch(TaskContext context, Document document, int recurrenceCounter) throws IOException {
-
         final Elements elements = document.select(template.getSearchPattern());
         logger.debug(String.format("Found %s elements matching pattern: %s", elements.size(), template.getSearchPattern()));
         for (Element element : elements) {
@@ -77,9 +78,20 @@ public class SearchTask implements Task {
         return document;
     }
 
-    private OutputRow parseElement(Element element, List<String> cssQueries) {
-        return cssQueries.stream().map(query -> element.select(query).text()).collect(Collectors.toCollection(OutputRow::new));
+    private OutputRow parseElement(Element element, List<String> xPathQueries) {
+        return xPathQueries.stream().map(query -> Xsoup.compile(query).evaluate(element).get()).collect(Collectors.toCollection(OutputRow::new));
     }
+
+ /*   private OutputRow parseElement(Element element, List<String> xPathQueries) throws XPathExpressionException {
+        final XPath xPath = XPathFactory.newInstance().newXPath();
+        return xPathQueries.stream().map(query -> {
+            try {
+                return xPath.compile(query).evaluate(element);
+            } catch (XPathExpressionException e) {
+                return "XPATH_QUERY_FAILED";
+            }
+        }).collect(Collectors.toCollection(OutputRow::new));
+    }*/
 
     private Optional<Document> getNext(Document document, String nestingPattern) throws IOException {
         final String nestedUrl = document.select(nestingPattern).attr("href");

@@ -1,8 +1,6 @@
 package net.remotehost.domdetective.tasks;
 
 import net.remotehost.domdetective.parser.Template;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.FileWriter;
 import java.io.IOException;

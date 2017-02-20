@@ -87,7 +87,7 @@ public class TemplateParserTest {
 
     private Properties createDummy() {
         final Properties properties = new Properties();
-        properties.setProperty("templates", "something,else,misconfiguration");
+        properties.setProperty("templates", "something;else;misconfiguration");
         properties.setProperty("something.url", "http://something.com");
         properties.setProperty("something.search.pattern", "div.bajo");
         properties.setProperty("something.output.pattern", "div.class");

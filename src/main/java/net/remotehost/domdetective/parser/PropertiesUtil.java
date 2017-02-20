@@ -15,7 +15,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class PropertiesUtil {
     private static final Logger logger = LogManager.getLogger();
 
-    public static final String DELIMITER = ",";
+    public static final String DELIMITER = ";";
 
     public static int getIntegerProperty(Properties properties, String key, int defaultValue) {
         final Optional<Integer> integerProperty = getIntegerProperty(properties, key);

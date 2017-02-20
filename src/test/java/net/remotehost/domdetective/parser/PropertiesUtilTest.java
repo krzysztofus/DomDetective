@@ -47,7 +47,7 @@ public class PropertiesUtilTest {
     @Test
     public void shouldParseValidPropertyOnDefaultDelimiter() {
         //given
-        final Properties input = createDummyProperties("key", "test,values");
+        final Properties input = createDummyProperties("key", "test;values");
 
         //when
         final String[] actual = tested.getArray("key", input);
@@ -60,7 +60,7 @@ public class PropertiesUtilTest {
     @Test
     public void shouldReturnEmptyOptionalWhenNoPropertyWasFound() {
         //given
-        final Properties input = createDummyProperties("Will", "not,look,for,that");
+        final Properties input = createDummyProperties("Will", "not;look;for;that");
 
         //when
         final String[] actual = tested.getArray("test", input);
@@ -85,7 +85,7 @@ public class PropertiesUtilTest {
     @Test
     public void shouldGetSet() {
         //given
-        final Properties input = createDummyProperties("key", "test,values");
+        final Properties input = createDummyProperties("key", "test;values");
 
         //when
         final Optional<Set<String>> actual = tested.getSet("key", input);
